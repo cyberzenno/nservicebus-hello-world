@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--THIS IS A SAMPLE LICENSE FILE-->
+<!--PLEASE GET YOUR FREE LINCESE FROM: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows-->
+<!--then add it to this folder with name License.xml (or update the hardcoded name in License.cs)-->
+<license type="Non-Production Development" Applications="All" expiration="2022-09-05" id="a5d58d46-11a22-3bcd-9ae4-d4cfab0a2347">
+	<name>SAMPLE@SAMPLE.SAMPLE</name>
+	<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+		<SignedInfo>
+			<CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+			<SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+			<Reference URI="">
+				<Transforms>
+					<Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" />
+				</Transforms>
+				<DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+				<DigestValue>s4mpl3_d1g3st_v4lu3=</DigestValue>
+			</Reference>
+		</SignedInfo>
+		<SignatureValue>s4mpl3_s1gn4tur3=</SignatureValue>
+	</Signature>
+</license>
