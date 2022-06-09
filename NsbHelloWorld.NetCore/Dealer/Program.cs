@@ -15,10 +15,10 @@ namespace Dealer
 
             //config
             //basic configurations
-            var config = new EndpointConfiguration("my.dealer.queue");
+            var config = new EndpointConfiguration("my.core.dealer.queue");
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
-            config.SendFailedMessagesTo("my.dealer.queue.error");
+            config.SendFailedMessagesTo("my.core.dealer.queue.error");
 
             //this is required only the first time you run the endpoint
             //in order to create the queues in Rabbit or any other trasnport
