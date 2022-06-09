@@ -34,9 +34,9 @@ namespace Client
 
             //routing
             //routing is needed to tell which message goes where
-            var transport = config.UseTransport<RabbitMQTransport>();
-            transport.ConnectionString(() => "host=localhost");
-            transport.UseDirectRoutingTopology();
+            var transport = config.UseTransport<AzureServiceBusTransport>();
+            transport.ConnectionString(() =>  Secrets.AzureServiceBus_ConnectionString);
+            //transport.UseDirectRoutingTopology();
 
             var routing = transport.Routing();
 
