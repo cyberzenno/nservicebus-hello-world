@@ -27,7 +27,7 @@ namespace Server
             //if the licence is not valid,
             //NSB will open the browser to get a Free License: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows
             //just download and replace the file Shared\License\License.xml
-            var licensePath = Licence.Path();
+            var licensePath = License.Path();
             config.LicensePath(licensePath);
 
             //routing

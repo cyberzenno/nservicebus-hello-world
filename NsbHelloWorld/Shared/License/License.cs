@@ -2,7 +2,7 @@
 
 namespace Shared
 {
-    public static class Licence
+    public static class License
     {
         public static string Path()
         {
