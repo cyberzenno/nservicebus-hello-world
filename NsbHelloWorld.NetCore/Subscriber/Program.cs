@@ -15,10 +15,10 @@ namespace Subscriber
 
             //config
             //basic configurations
-            var config = new EndpointConfiguration("my.core.subscriber.queue");
+            var config = new EndpointConfiguration(Queues.SubscriberQueue);
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
-            config.SendFailedMessagesTo("my.core.subscriber.queue.error");
+            config.SendFailedMessagesTo(Queues.Error);
 
             //this is required only the first time you run the endpoint
             //in order to create the queues in Rabbit or any other trasnport

@@ -15,11 +15,11 @@ namespace Client
 
             //config 
             //basic configurations
-            var config = new EndpointConfiguration("my.core.client.queue");
+            var config = new EndpointConfiguration(Queues.ClientQueue);
 
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
-            config.SendFailedMessagesTo("my.core.client.queue.error");
+            config.SendFailedMessagesTo(Queues.Error);
 
             //this is required only the first time you run the endpoint
             //in order to create the queues in Rabbit or any other trasnport
@@ -35,16 +35,16 @@ namespace Client
             //routing
             //routing is needed to tell which message goes where
             var transport = config.UseTransport<AzureServiceBusTransport>();
-            transport.ConnectionString(() =>  Secrets.AzureServiceBus_ConnectionString);
+            transport.ConnectionString(() => Secrets.AzureServiceBus_ConnectionString);
             //transport.UseDirectRoutingTopology();
 
             var routing = transport.Routing();
 
-            routing.RouteToEndpoint(typeof(PlaceOrderMessage), "my.core.server.queue");
-            routing.RouteToEndpoint(typeof(StartHelloWorldSagaMessage), "my.core.server.queue");
-            routing.RouteToEndpoint(typeof(SendSomethingToSagaMessage), "my.core.server.queue");
-            routing.RouteToEndpoint(typeof(PrintSagaDataMessage), "my.core.server.queue");
-            routing.RouteToEndpoint(typeof(CompleteHelloWorldSagaMessage), "my.core.server.queue");
+            routing.RouteToEndpoint(typeof(PlaceOrderMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(StartHelloWorldSagaMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(SendSomethingToSagaMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(PrintSagaDataMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(CompleteHelloWorldSagaMessage), Queues.ServerQueue);
 
             //conventions
             //conventions are used to define, precisely, conventions

@@ -15,10 +15,10 @@ namespace Server
 
             //config
             //basic configurations
-            var config = new EndpointConfiguration("my.core.server.queue");
+            var config = new EndpointConfiguration(Queues.ServerQueue);
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
-            config.SendFailedMessagesTo("my.core.server.queue.error");
+            config.SendFailedMessagesTo(Queues.Error);
 
             //this is required only the first time you run the endpoint
             //in order to create the queues in Rabbit or any other trasnport
@@ -40,8 +40,8 @@ namespace Server
            
             //important note: one even can be published to multiple queues
             //and we need to use Publish instead of Send
-            routing.RouteToEndpoint(typeof(OrderPlacedEvent), "my.core.dealer.queue");
-            routing.RouteToEndpoint(typeof(OrderPlacedEvent), "my.core.subscriber.queue");
+            routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.DealerQueue);
+            routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.SubscriberQueue);
 
             //conventions
             //conventions are used to define, precisely, conventions
