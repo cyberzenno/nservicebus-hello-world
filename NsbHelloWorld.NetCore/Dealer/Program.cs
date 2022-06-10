@@ -35,6 +35,8 @@ namespace Dealer
             //routing is needed to tell which message goes where
             var transport = config.UseTransport<AzureServiceBusTransport>();
             transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
+
+            //RabbitMq specific
             //transport.UseDirectRoutingTopology();
 
             //Dealer has got no routing,

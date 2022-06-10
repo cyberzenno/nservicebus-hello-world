@@ -36,6 +36,8 @@ namespace Client
             //routing is needed to tell which message goes where
             var transport = config.UseTransport<AzureServiceBusTransport>();
             transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
+
+            //RabbitMq specific
             //transport.UseDirectRoutingTopology();
 
             var routing = transport.Routing();
