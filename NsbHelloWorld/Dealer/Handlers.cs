@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using NServiceBus;
 using Shared;
 
-namespace Subscriber
+namespace Dealer
 {
     public class OrderCreatedHandler : IHandleMessages<OrderPlacedEvent>
     {
