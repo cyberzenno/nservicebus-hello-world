@@ -143,6 +143,8 @@ namespace Client
             options.SetHeader(CustomHeaders.DealerContext, contextMessageHeaderValue);
 
             bus.Send(placeOrder,options).ConfigureAwait(false);
+
+            Console.WriteLine($"Sent PlaceOrder for {contextMessageHeaderValue} {j}\n\n");
         }
 
         private static void SendMessage(IEndpointInstance bus, int j)
