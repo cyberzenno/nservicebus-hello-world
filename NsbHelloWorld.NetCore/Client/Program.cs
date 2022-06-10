@@ -17,7 +17,7 @@ namespace Client
 
             //config 
             //basic configurations
-            var config = new EndpointConfiguration(Queues.ClientQueue); 
+            var config = new EndpointConfiguration(Queues.ClientQueue);
 
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
@@ -70,6 +70,12 @@ namespace Client
             Console.WriteLine("SPACE to print Saga");
             Console.WriteLine("LEFT to complete to Saga");
             Console.WriteLine("--------------------------------");
+            Console.WriteLine("M to send a message to Mario Context");
+            Console.WriteLine("L to send a message to Luigi Context");
+            Console.WriteLine("T to send a message to Toad Context");
+            Console.WriteLine("K to send a message to Koopa Context");
+            Console.WriteLine("--------------------------------");
+
             Console.WriteLine("Press any key to exit");
 
             var i = 0;
@@ -85,7 +91,7 @@ namespace Client
                 switch (key.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        SendMessage(bus, i++, j++);
+                        SendMessage(bus, j++);
                         continue;
 
                     case ConsoleKey.DownArrow:
@@ -104,6 +110,20 @@ namespace Client
                         CompleteSaga(bus, myId);
                         continue;
 
+                    //------
+                    case ConsoleKey.M:
+                        SendMessageWithHeader(bus, "Mario", j++);
+                        continue;
+                    case ConsoleKey.L:
+                        SendMessageWithHeader(bus, "Luigi", j++);
+                        continue;
+                    case ConsoleKey.T:
+                        SendMessageWithHeader(bus, "Toad", j++);
+                        continue;
+                    case ConsoleKey.K:
+                        SendMessageWithHeader(bus, "Koopa", j++);
+                        continue;
+
                     default:
                         return;
                 }
@@ -111,13 +131,28 @@ namespace Client
             }
         }
 
-        private static void SendMessage(IEndpointInstance bus, int i, int j)
+        private static void SendMessageWithHeader(IEndpointInstance bus, string contextMessageHeaderValue, int j)
+        {
+            var placeOrder = new PlaceOrderMessage
+            {
+                Id = j,
+                Product = "New shoes for " + contextMessageHeaderValue,
+            };
+
+            var options = new SendOptions();
+            options.SetHeader(CustomHeaders.DealerContext, contextMessageHeaderValue);
+
+            bus.Send(placeOrder,options).ConfigureAwait(false);
+        }
+
+        private static void SendMessage(IEndpointInstance bus, int j)
         {
             var placeOrder = new PlaceOrderMessage
             {
                 Id = j,
                 Product = "New shoes",
             };
+
             bus.Send(placeOrder).ConfigureAwait(false);
             Console.WriteLine($"Sent PlaceOrder {j}\n\n");
         }

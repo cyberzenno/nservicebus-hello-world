@@ -9,7 +9,16 @@ namespace Server
     {
         public Task Handle(PlaceOrderMessage message, IMessageHandlerContext context)
         {
-            Console.WriteLine($"PlaceOrder received {message.Id}");
+            var dealerContext = (string)null;
+
+            var hasDealerContext = context.MessageHeaders.ContainsKey(CustomHeaders.DealerContext);
+            if (hasDealerContext)
+            {
+                dealerContext = context.MessageHeaders[CustomHeaders.DealerContext];
+                c.w($"---THIS MESSAGE IS MEANT FOR: {dealerContext}---\n\n");
+            }
+
+            c.w($"PlaceOrder received {message.Id}");
 
             var somethingHappened = new SomethingHappenedInTheServerEvent()
             {
@@ -30,6 +39,11 @@ namespace Server
             context.Publish(orderPlaced);
 
             Console.WriteLine($"Published Order Placed {orderPlaced.Id}\n\n");
+
+            if (dealerContext != null)
+            {
+                c.w($"---END --- THIS MESSAGE IS MEANT FOR: {dealerContext}---\n\n");
+            }
 
 
             return Task.CompletedTask;
