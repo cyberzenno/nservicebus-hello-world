@@ -348,5 +348,15 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-License.xml
-NsbHelloWorld.NetCore/Shared/Secrets/
+
+# Ignore everything in ActualSecrets
+NsbHelloWorld.NetCore/Shared/Secrets/ActualSecrets/*
+
+#But not these
+!NsbHelloWorld.NetCore/Shared/Secrets/ActualSecrets/_sample.secrets.json
+!NsbHelloWorld.NetCore/Shared/Secrets/ActualSecrets/_sample.License.xml
+
+
+
+
+

@@ -9,6 +9,8 @@ namespace Client
     {
         static void Main()
         {
+            var _secrets = new SecretsReader();
+
             //logging
             var logging = LogManager.Use<DefaultFactory>();
             logging.Level(LogLevel.Error);
@@ -27,15 +29,13 @@ namespace Client
 
             //if the licence is not valid,
             //NSB will open the browser to get a Free License: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows
-            //just download and replace the file Shared\License\License.xml
-            //(it works also without, but with few red errors and some limitations)
-            var licensePath = License.Path();
-            config.LicensePath(licensePath);
+            //just download and add the file Shared\Secrets\License.xml
+            config.License(_secrets.NServiceBus_License);
 
             //routing
             //routing is needed to tell which message goes where
             var transport = config.UseTransport<AzureServiceBusTransport>();
-            transport.ConnectionString(() => Secrets.AzureServiceBus_ConnectionString);
+            transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
             //transport.UseDirectRoutingTopology();
 
             var routing = transport.Routing();

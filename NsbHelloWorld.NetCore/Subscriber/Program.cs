@@ -9,6 +9,8 @@ namespace Subscriber
     {
         static void Main(string[] args)
         {
+            var _secrets = new SecretsReader();
+
             //logging
             var logging = LogManager.Use<DefaultFactory>();
             logging.Level(LogLevel.Info);
@@ -26,14 +28,13 @@ namespace Subscriber
 
             //if the licence is not valid,
             //NSB will open the browser to get a Free License: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows
-            //just download and replace the file Shared\License\License.xml
-            var licensePath = License.Path();
-            config.LicensePath(licensePath);
+            //just download and add the file Shared\Secrets\License.xml
+            config.License(_secrets.NServiceBus_License);
 
             //routing
             //routing is needed to tell which message goes where
             var transport = config.UseTransport<AzureServiceBusTransport>();
-            transport.ConnectionString(() => Secrets.AzureServiceBus_ConnectionString);
+            transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
             //transport.UseDirectRoutingTopology();
 
             //bus

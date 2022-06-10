@@ -2,17 +2,25 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>06921eea-6917-4dda-af42-5d561e28f3fa</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="NServiceBus" Version="7.7.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="License\License.xml">
+    <None Update="Secrets\ActualSecrets\License.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="License\SampleLicense.xml">
+    <None Update="Secrets\ActualSecrets\_sample.secrets.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Secrets\ActualSecrets\secrets.eo.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Secrets\ActualSecrets\secrets.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
