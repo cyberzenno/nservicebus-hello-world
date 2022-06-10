@@ -33,11 +33,11 @@ namespace Subscriber
 
             //routing
             //routing is needed to tell which message goes where
-                     var transport = config.UseTransport<AzureServiceBusTransport>();
-            transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
+                     var transport = config.UseTransport<RabbitMQTransport>();
+            transport.ConnectionString(() => _secrets.RabbitMQ_ConnectionString);
 
             //RabbitMq specific
-            //transport.UseDirectRoutingTopology();
+            transport.UseDirectRoutingTopology();
 
             //bus
             var endpointInstance = Endpoint.Start(config).Result;
