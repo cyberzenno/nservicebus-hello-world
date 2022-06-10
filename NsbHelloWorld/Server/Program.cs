@@ -9,16 +9,18 @@ namespace Server
     {
         static void Main(string[] args)
         {
+            var _secrets = new SecretsReader();
+
             //logging
             var logging = LogManager.Use<DefaultFactory>();
             logging.Level(LogLevel.Warn);
 
             //config
             //basic configurations
-            var config = new EndpointConfiguration("my.server.queue");
+            var config = new EndpointConfiguration(Queues.ServerQueue);
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
-            config.SendFailedMessagesTo("my.server.queue.error");
+            config.SendFailedMessagesTo(Queues.Error);
 
             //this is required only the first time you run the endpoint
             //in order to create the queues in Rabbit or any other trasnport
@@ -26,22 +28,21 @@ namespace Server
 
             //if the licence is not valid,
             //NSB will open the browser to get a Free License: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows
-            //just download and replace the file Shared\License\License.xml
-            var licensePath = License.Path();
-            config.LicensePath(licensePath);
+            //just download and add the file Shared\Secrets\License.xml
+            config.License(_secrets.NServiceBus_License);
 
             //routing
             //routing is needed to tell which message goes where
             var transport = config.UseTransport<RabbitMQTransport>();
-            transport.ConnectionString(() => "host=localhost");
+            transport.ConnectionString(() => _secrets.RabbitMQ_ConnectionString);
             transport.UseDirectRoutingTopology();
 
             var routing = transport.Routing();
-           
+
             //important note: one even can be published to multiple queues
             //and we need to use Publish instead of Send
-            routing.RouteToEndpoint(typeof(OrderPlacedEvent), "my.dealer.queue");
-            routing.RouteToEndpoint(typeof(OrderPlacedEvent), "my.subscriber.queue");
+            routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.DealerQueue);
+            routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.SubscriberQueue);
 
             //conventions
             //conventions are used to define, precisely, conventions
