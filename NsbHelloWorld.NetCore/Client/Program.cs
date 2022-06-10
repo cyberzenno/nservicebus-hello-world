@@ -15,7 +15,7 @@ namespace Client
 
             //config 
             //basic configurations
-            var config = new EndpointConfiguration(Queues.ClientQueue);
+            var config = new EndpointConfiguration(Queues.ClientQueue); 
 
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
