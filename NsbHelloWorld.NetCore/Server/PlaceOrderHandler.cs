@@ -7,7 +7,7 @@ namespace Server
 {
     public class PlaceOrderHandler : IHandleMessages<PlaceOrderMessage>
     {
-        public Task Handle(PlaceOrderMessage message, IMessageHandlerContext context)
+        public async Task Handle(PlaceOrderMessage message, IMessageHandlerContext context)
         {
             var dealerContext = (string)null;
 
@@ -26,7 +26,7 @@ namespace Server
                 Message = "Something happened published by SERVER"
             };
 
-            context.Publish(somethingHappened);
+            await context.Publish(somethingHappened);
 
             Console.WriteLine($"Published that something happened on the server{somethingHappened.Id}");
 
@@ -36,7 +36,7 @@ namespace Server
                 Message = "Sent from SERVER"
             };
 
-            context.Publish(orderPlaced);
+            await context.Publish(orderPlaced);
 
             Console.WriteLine($"Published Order Placed {orderPlaced.Id}\n\n");
 
@@ -44,9 +44,6 @@ namespace Server
             {
                 c.w($"---END --- THIS MESSAGE IS MEANT FOR: {dealerContext}---\n\n");
             }
-
-
-            return Task.CompletedTask;
         }
     }
 }

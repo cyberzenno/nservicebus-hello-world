@@ -33,7 +33,7 @@ namespace Server
 
             //routing
             //routing is needed to tell which message goes where
-                     var transport = config.UseTransport<AzureServiceBusTransport>();
+            var transport = config.UseTransport<AzureServiceBusTransport>();
             transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
 
             //RabbitMq specific
@@ -41,10 +41,10 @@ namespace Server
 
             var routing = transport.Routing();
            
-            //important note: one even can be published to multiple queues
+            //important note: one event can be published to multiple queues
             //and we need to use Publish instead of Send
-            routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.DealerQueue);
-            routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.SubscriberQueue);
+            //routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.DealerQueue);
+            //routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.SubscriberQueue);
 
             //conventions
             //conventions are used to define, precisely, conventions
