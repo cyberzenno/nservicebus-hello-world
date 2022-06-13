@@ -29,7 +29,7 @@ namespace Client
 
             //if the licence is not valid,
             //NSB will open the browser to get a Free License: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows
-            //just download and add the file Shared\Secrets\License.xml
+            //just download and add the file Shared\Secrets\ActualSecrets\License.xml
             config.License(_secrets.NServiceBus_License);
 
             //routing
@@ -72,7 +72,8 @@ namespace Client
             Console.WriteLine("--------------------------------");
             Console.WriteLine("M, L, T, K to send a message to Mario, Luigi, Toad or Koopa Context");
             Console.WriteLine("--------------------------------");
-            Console.WriteLine("D to delay sending message");
+            Console.WriteLine("S to delay sending message by few seconds");
+            Console.WriteLine("D to delay sending message by many days");
             Console.WriteLine("--------------------------------");
 
             Console.WriteLine("Press any key to exit");
@@ -124,8 +125,11 @@ namespace Client
                         continue;
 
                     //------
-                    case ConsoleKey.D:
-                        DelaySendingMessage(bus, j++);
+                    case ConsoleKey.S:
+                        DelaySendingMessageSeconds(bus, j++);
+                        continue;
+                    case ConsoleKey.Y:
+                        DelaySendingMessageDays(bus, j++);
                         continue;
 
                     default:
@@ -135,10 +139,8 @@ namespace Client
             }
         }
 
-        private static void DelaySendingMessage(IEndpointInstance bus, int j)
+        private static void DelaySendingMessageSeconds(IEndpointInstance bus, int j, int secondsToDelay = 60)
         {
-            var secondsToDelay = 60;
-
             var placeOrder = new PlaceOrderMessage
             {
                 Id = j,
@@ -152,6 +154,24 @@ namespace Client
 
             Console.WriteLine($"Sent PlaceOrder with {secondsToDelay} seconds delay {j}\n\n");
         }
+
+        private static void DelaySendingMessageDays(IEndpointInstance bus, int j, int daysToDelay = 365)
+        {
+            var placeOrder = new PlaceOrderMessage
+            {
+                Id = j,
+                Product = $"New shoes - Delayed by {daysToDelay} days",
+            };
+
+            var options = new SendOptions();
+            options.DelayDeliveryWith(TimeSpan.FromDays(daysToDelay));
+
+            bus.Send(placeOrder, options).ConfigureAwait(false);
+
+            Console.WriteLine($"Sent PlaceOrder with {daysToDelay} days delay {j}\n\n");
+        }
+
+
 
         private static void SendMessageWithHeader(IEndpointInstance bus, string contextMessageHeaderValue, int j)
         {

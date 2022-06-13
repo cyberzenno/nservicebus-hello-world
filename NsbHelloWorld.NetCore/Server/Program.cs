@@ -28,7 +28,7 @@ namespace Server
 
             //if the licence is not valid,
             //NSB will open the browser to get a Free License: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows
-            //just download and add the file Shared\Secrets\License.xml
+            //just download and add the file Shared\Secrets\ActualSecrets\License.xml
             config.License(_secrets.NServiceBus_License);
 
             //routing
