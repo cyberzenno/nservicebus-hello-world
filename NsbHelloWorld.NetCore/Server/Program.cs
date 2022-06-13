@@ -42,12 +42,17 @@ namespace Server
             //and we need to use Publish instead of Send
             routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.DealerQueue);
             routing.RouteToEndpoint(typeof(OrderPlacedEvent), Queues.SubscriberQueue);
+            routing.RouteToEndpoint(typeof(ChainEndMessage), Queues.ServerQueue);
 
             //conventions
             //conventions are used to define, precisely, conventions
             //instead of saying "hey, this class is a message", we can say "whatever class that ends with 'Message' is a message"
             //so on for events, commands, etc
             //for now, we don't use them
+
+            var recoverabilityConfiguration = config.Recoverability();
+            recoverabilityConfiguration.Immediate(set => set.NumberOfRetries(0));
+            recoverabilityConfiguration.Delayed(set => set.NumberOfRetries(3).TimeIncrease(TimeSpan.FromSeconds(30)));
 
             //bus
             var endpointInstance = Endpoint.Start(config).Result;

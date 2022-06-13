@@ -45,12 +45,18 @@ namespace Client
             routing.RouteToEndpoint(typeof(SendSomethingToSagaMessage), Queues.ServerQueue);
             routing.RouteToEndpoint(typeof(PrintSagaDataMessage), Queues.ServerQueue);
             routing.RouteToEndpoint(typeof(CompleteHelloWorldSagaMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(ChainStartMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(DelayMessage), Queues.ServerQueue);
 
             //conventions
             //conventions are used to define, precisely, conventions
             //instead of saying "hey, this class is a message", we can say "whatever class that ends with 'Message' is a message"
             //so on for events, commands, etc
             //for now, we don't use them
+
+            var recoverabilityConfiguration = config.Recoverability();
+            recoverabilityConfiguration.Immediate(set => set.NumberOfRetries(0));
+            recoverabilityConfiguration.Delayed(set => set.NumberOfRetries(3).TimeIncrease(TimeSpan.FromSeconds(30)));
 
             //bus
             var bus = Endpoint.Start(config).Result;
@@ -67,6 +73,13 @@ namespace Client
             Console.WriteLine("RIGHT to send message to Saga");
             Console.WriteLine("SPACE to print Saga");
             Console.WriteLine("LEFT to complete to Saga");
+            Console.WriteLine("A to send a failing chained message");
+            Console.WriteLine("B to send a succeeding chained message");
+            Console.WriteLine("C to send a delay message");
+            Console.WriteLine("Y to send a year delay message");
+            Console.WriteLine("D to send a message to the first listener");
+            Console.WriteLine("E to send a message to the second listener");
+            Console.WriteLine("F to send a message to both listeners");
             Console.WriteLine("--------------------------------");
             Console.WriteLine("Press any key to exit");
 
@@ -100,6 +113,22 @@ namespace Client
 
                     case ConsoleKey.LeftArrow:
                         CompleteSaga(bus, myId);
+                        continue;
+
+                    case ConsoleKey.A:
+                        SendChainMessage(bus, i++, j++, false);
+                        continue;
+
+                    case ConsoleKey.B:
+                        SendChainMessage(bus, i++, j++, true);
+                        continue;
+
+                    case ConsoleKey.C:
+                        SendDelayMessage(bus, i++, j++, 10);
+                        continue;
+
+                    case ConsoleKey.Y:
+                        SendDelayMessage(bus, i++, j++, 3154000);
                         continue;
 
                     default:
@@ -161,6 +190,42 @@ namespace Client
                 Id = myGuid,
                 Message = "Client send to Stop Saga at " + DateTime.Now.ToString("hh : mm : ss")
             }).ConfigureAwait(false);
+        }
+
+        private static void SendChainMessage(
+            IEndpointInstance bus,
+            int i,
+            int j,
+            bool shouldSucceed
+        )
+        {
+            var chain = new ChainStartMessage
+            {
+                Id = j,
+                MessageShouldSucceed = shouldSucceed
+            };
+            bus.Send(chain).ConfigureAwait(false);
+            Console.WriteLine($"Sent Chain {j} with success status {shouldSucceed}\n\n");
+        }
+
+        private static void SendDelayMessage(
+            IEndpointInstance bus,
+            int i,
+            int j,
+            int delaySeconds
+        )
+        {
+            var chain = new DelayMessage
+            {
+                Id = j,
+                DelaySeconds = delaySeconds
+            };
+
+            var sendOptions = new SendOptions();
+            sendOptions.DelayDeliveryWith(TimeSpan.FromSeconds(delaySeconds));
+
+            bus.Send(chain, sendOptions).ConfigureAwait(false);
+            Console.WriteLine($"Delay {j} with delay for {delaySeconds} seconds\n\n");
         }
     }
 }
