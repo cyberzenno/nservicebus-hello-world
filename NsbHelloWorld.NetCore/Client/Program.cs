@@ -9,13 +9,15 @@ namespace Client
     {
         static void Main()
         {
+            var _secrets = new SecretsReader();
+
             //logging
             var logging = LogManager.Use<DefaultFactory>();
             logging.Level(LogLevel.Error);
 
             //config 
             //basic configurations
-            var config = new EndpointConfiguration(Queues.ClientQueue); 
+            var config = new EndpointConfiguration(Queues.ClientQueue);
 
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
@@ -27,15 +29,15 @@ namespace Client
 
             //if the licence is not valid,
             //NSB will open the browser to get a Free License: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows
-            //just download and replace the file Shared\License\License.xml
-            //(it works also without, but with few red errors and some limitations)
-            var licensePath = License.Path();
-            config.LicensePath(licensePath);
+            //just download and add the file Shared\Secrets\ActualSecrets\License.xml
+            config.License(_secrets.NServiceBus_License);
 
             //routing
             //routing is needed to tell which message goes where
             var transport = config.UseTransport<AzureServiceBusTransport>();
-            transport.ConnectionString(() => Secrets.AzureServiceBus_ConnectionString);
+            transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
+
+            //RabbitMq specific
             //transport.UseDirectRoutingTopology();
 
             var routing = transport.Routing();
@@ -73,14 +75,17 @@ namespace Client
             Console.WriteLine("RIGHT to send message to Saga");
             Console.WriteLine("SPACE to print Saga");
             Console.WriteLine("LEFT to complete to Saga");
+            Console.WriteLine("--------------------------------");
+            Console.WriteLine("M, L, T, K to send a message to Mario, Luigi, Toad or Koopa Context");
+            Console.WriteLine("--------------------------------");
+            Console.WriteLine("S to delay sending message by few seconds");
+            Console.WriteLine("D to delay sending message by many days");
+            Console.WriteLine("--------------------------------");
             Console.WriteLine("A to send a failing chained message");
             Console.WriteLine("B to send a succeeding chained message");
-            Console.WriteLine("C to send a delay message");
-            Console.WriteLine("Y to send a year delay message");
-            Console.WriteLine("D to send a message to the first listener");
-            Console.WriteLine("E to send a message to the second listener");
-            Console.WriteLine("F to send a message to both listeners");
             Console.WriteLine("--------------------------------");
+
+
             Console.WriteLine("Press any key to exit");
 
             var i = 0;
@@ -96,7 +101,7 @@ namespace Client
                 switch (key.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        SendMessage(bus, i++, j++);
+                        SendMessage(bus, j++);
                         continue;
 
                     case ConsoleKey.DownArrow:
@@ -115,6 +120,30 @@ namespace Client
                         CompleteSaga(bus, myId);
                         continue;
 
+
+                    //------
+                    case ConsoleKey.M:
+                        SendMessageWithHeader(bus, "Mario", j++);
+                        continue;
+                    case ConsoleKey.L:
+                        SendMessageWithHeader(bus, "Luigi", j++);
+                        continue;
+                    case ConsoleKey.T:
+                        SendMessageWithHeader(bus, "Toad", j++);
+                        continue;
+                    case ConsoleKey.K:
+                        SendMessageWithHeader(bus, "Koopa", j++);
+                        continue;
+
+                    //------
+                    case ConsoleKey.S:
+                        DelaySendingMessageSeconds(bus, j++);
+                        continue;
+                    case ConsoleKey.Y:
+                        DelaySendingMessageDays(bus, j++);
+                        continue;
+
+                    //-------
                     case ConsoleKey.A:
                         SendChainMessage(bus, i++, j++, false);
                         continue;
@@ -123,13 +152,6 @@ namespace Client
                         SendChainMessage(bus, i++, j++, true);
                         continue;
 
-                    case ConsoleKey.C:
-                        SendDelayMessage(bus, i++, j++, 10);
-                        continue;
-
-                    case ConsoleKey.Y:
-                        SendDelayMessage(bus, i++, j++, 3154000);
-                        continue;
 
                     default:
                         return;
@@ -138,13 +160,64 @@ namespace Client
             }
         }
 
-        private static void SendMessage(IEndpointInstance bus, int i, int j)
+        private static void DelaySendingMessageSeconds(IEndpointInstance bus, int j, int secondsToDelay = 60)
+        {
+            var placeOrder = new PlaceOrderMessage
+            {
+                Id = j,
+                Product = $"New shoes - Delayed by {secondsToDelay} seconds",
+            };
+
+            var options = new SendOptions();
+            options.DelayDeliveryWith(TimeSpan.FromSeconds(secondsToDelay));
+
+            bus.Send(placeOrder, options).ConfigureAwait(false);
+
+            Console.WriteLine($"Sent PlaceOrder with {secondsToDelay} seconds delay {j}\n\n");
+        }
+
+        private static void DelaySendingMessageDays(IEndpointInstance bus, int j, int daysToDelay = 365)
+        {
+            var placeOrder = new PlaceOrderMessage
+            {
+                Id = j,
+                Product = $"New shoes - Delayed by {daysToDelay} days",
+            };
+
+            var options = new SendOptions();
+            options.DelayDeliveryWith(TimeSpan.FromDays(daysToDelay));
+
+            bus.Send(placeOrder, options).ConfigureAwait(false);
+
+            Console.WriteLine($"Sent PlaceOrder with {daysToDelay} days delay {j}\n\n");
+        }
+
+
+
+        private static void SendMessageWithHeader(IEndpointInstance bus, string contextMessageHeaderValue, int j)
+        {
+            var placeOrder = new PlaceOrderMessage
+            {
+                Id = j,
+                Product = "New shoes for " + contextMessageHeaderValue,
+            };
+
+            var options = new SendOptions();
+            options.SetHeader(CustomHeaders.DealerContext, contextMessageHeaderValue);
+
+            bus.Send(placeOrder, options).ConfigureAwait(false);
+
+            Console.WriteLine($"Sent PlaceOrder for {contextMessageHeaderValue} {j}\n\n");
+        }
+
+        private static void SendMessage(IEndpointInstance bus, int j)
         {
             var placeOrder = new PlaceOrderMessage
             {
                 Id = j,
                 Product = "New shoes",
             };
+
             bus.Send(placeOrder).ConfigureAwait(false);
             Console.WriteLine($"Sent PlaceOrder {j}\n\n");
         }
@@ -208,24 +281,5 @@ namespace Client
             Console.WriteLine($"Sent Chain {j} with success status {shouldSucceed}\n\n");
         }
 
-        private static void SendDelayMessage(
-            IEndpointInstance bus,
-            int i,
-            int j,
-            int delaySeconds
-        )
-        {
-            var chain = new DelayMessage
-            {
-                Id = j,
-                DelaySeconds = delaySeconds
-            };
-
-            var sendOptions = new SendOptions();
-            sendOptions.DelayDeliveryWith(TimeSpan.FromSeconds(delaySeconds));
-
-            bus.Send(chain, sendOptions).ConfigureAwait(false);
-            Console.WriteLine($"Delay {j} with delay for {delaySeconds} seconds\n\n");
-        }
     }
 }

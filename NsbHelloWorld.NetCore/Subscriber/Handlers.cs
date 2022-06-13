@@ -9,7 +9,7 @@ namespace Subscriber
     {
         public Task Handle(OrderPlacedEvent message, IMessageHandlerContext context)
         {
-            Console.WriteLine($"OrderPlaced {message.Id}\n\n");//: {message.OrderId}, {message.Message}");
+            Console.WriteLine($"OrderPlaced {message.Id}\n\n");
 
             return Task.CompletedTask;
         }
@@ -19,7 +19,7 @@ namespace Subscriber
     {
         public Task Handle(SomethingHappenedInTheClientEvent message, IMessageHandlerContext context)
         {
-            Console.WriteLine($"SomethingHappenedInTheClient {message.Id}");//: {message.Id}, {message.Message}");
+            Console.WriteLine($"SomethingHappenedInTheClient {message.Id}");
             return Task.CompletedTask;
         }
     }
@@ -28,7 +28,7 @@ namespace Subscriber
     {
         public Task Handle(SomethingHappenedInTheServerEvent message, IMessageHandlerContext context)
         {
-            Console.WriteLine($"SomethingHappenedInTheServer {message.Id}");//: {message.Id}, {message.Message}\n\n");
+            Console.WriteLine($"SomethingHappenedInTheServer {message.Id}");
             return Task.CompletedTask;
         }
     }

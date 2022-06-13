@@ -8,7 +8,7 @@ namespace Server
 {
     public class ChainStartHandler : IHandleMessages<ChainStartMessage>
     {
-        public Task Handle(ChainStartMessage message, IMessageHandlerContext context)
+        public async Task Handle(ChainStartMessage message, IMessageHandlerContext context)
         {
             Console.WriteLine($"ChainStart received {message.Id} with success status {message.MessageShouldSucceed} {DateTime.Now}");
 
@@ -17,7 +17,7 @@ namespace Server
                 Id = message.Id
             };
 
-            context.Send(chainEnd);
+           await context.Send(chainEnd);
 
             Thread.Sleep(5000);
 
@@ -32,11 +32,9 @@ namespace Server
                 Message = "Chain End was invoked"
             };
 
-            context.Publish(somethingHappened);
+            await context.Publish(somethingHappened);
 
             Console.WriteLine($"Chain End was invoked on the server {somethingHappened.Id}");
-
-            return Task.CompletedTask;
         }
     }
 }

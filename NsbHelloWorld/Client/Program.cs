@@ -11,17 +11,19 @@ namespace Client
     {
         static void Main()
         {
+            var _secrets = new SecretsReader();
+
             //logging
             var logging = LogManager.Use<DefaultFactory>();
             logging.Level(LogLevel.Error);
 
             //config 
             //basic configurations
-            var config = new EndpointConfiguration("my.client.queue");
+            var config = new EndpointConfiguration(Queues.ClientQueue);
 
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
-            config.SendFailedMessagesTo("my.client.queue.error");
+            config.SendFailedMessagesTo(Queues.Error);
 
             //this is required only the first time you run the endpoint
             //in order to create the queues in Rabbit or any other trasnport
@@ -29,24 +31,22 @@ namespace Client
 
             //if the licence is not valid,
             //NSB will open the browser to get a Free License: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows
-            //just download and replace the file Shared\License\License.xml
-            //(it works also without, but with few red errors and some limitations)
-            var licensePath = License.Path();
-            config.LicensePath(licensePath);
+            //just download and add the file Shared\Secrets\License.xml
+            config.License(_secrets.NServiceBus_License);
 
             //routing
             //routing is needed to tell which message goes where
             var transport = config.UseTransport<RabbitMQTransport>();
-            transport.ConnectionString(() => "host=localhost");
+            transport.ConnectionString(() => _secrets.RabbitMQ_ConnectionString);
             transport.UseDirectRoutingTopology();
 
             var routing = transport.Routing();
 
-            routing.RouteToEndpoint(typeof(PlaceOrderMessage), "my.server.queue");
-            routing.RouteToEndpoint(typeof(StartHelloWorldSagaMessage), "my.server.queue");
-            routing.RouteToEndpoint(typeof(SendSomethingToSagaMessage), "my.server.queue");
-            routing.RouteToEndpoint(typeof(PrintSagaDataMessage), "my.server.queue");
-            routing.RouteToEndpoint(typeof(CompleteHelloWorldSagaMessage), "my.server.queue");
+            routing.RouteToEndpoint(typeof(PlaceOrderMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(StartHelloWorldSagaMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(SendSomethingToSagaMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(PrintSagaDataMessage), Queues.ServerQueue);
+            routing.RouteToEndpoint(typeof(CompleteHelloWorldSagaMessage), Queues.ServerQueue);
 
             //conventions
             //conventions are used to define, precisely, conventions

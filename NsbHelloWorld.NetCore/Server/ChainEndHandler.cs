@@ -7,7 +7,7 @@ namespace Server
 {
     public class ChainEndHandler : IHandleMessages<ChainEndMessage>
     {
-        public Task Handle(ChainEndMessage message, IMessageHandlerContext context)
+        public async Task Handle(ChainEndMessage message, IMessageHandlerContext context)
         {
             Console.WriteLine($"ChainEnd received {message.Id}");
 
@@ -17,11 +17,9 @@ namespace Server
                 Message = "Chain End was finished"
             };
 
-            context.Publish(somethingHappened);
+            await context.Publish(somethingHappened);
 
-            Console.WriteLine($"Chain End was finished on the server {somethingHappened.Id}");
-
-            return Task.CompletedTask;
+            Console.WriteLine($"Chain End was finished on the server {somethingHappened.Id}");          
         }
     }
 }

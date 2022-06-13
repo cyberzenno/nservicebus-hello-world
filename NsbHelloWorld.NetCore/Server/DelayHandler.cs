@@ -8,7 +8,7 @@ namespace Server
 {
     public class DelayHandler : IHandleMessages<DelayMessage>
     {
-        public Task Handle(DelayMessage message, IMessageHandlerContext context)
+        public async Task Handle(DelayMessage message, IMessageHandlerContext context)
         {
             Console.WriteLine($"Delay received {message.Id}");
 
@@ -18,11 +18,9 @@ namespace Server
                 Message = "Delay was finished"
             };
 
-            context.Publish(somethingHappened);
+            await context.Publish(somethingHappened);
 
             Console.WriteLine($"Delay was finished on the server {somethingHappened.Id}");
-
-            return Task.CompletedTask;
         }
     }
 }
