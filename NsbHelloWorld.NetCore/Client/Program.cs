@@ -34,11 +34,11 @@ namespace Client
 
             //routing
             //routing is needed to tell which message goes where
-            var transport = config.UseTransport<RabbitMQTransport>();
-            transport.ConnectionString(() => _secrets.RabbitMQ_ConnectionString);
+            var transport = config.UseTransport<AzureServiceBusTransport>();
+            transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
 
             //RabbitMq specific
-            transport.UseDirectRoutingTopology();
+            //transport.UseDirectRoutingTopology();
 
             var routing = transport.Routing();
 
@@ -70,10 +70,9 @@ namespace Client
             Console.WriteLine("SPACE to print Saga");
             Console.WriteLine("LEFT to complete to Saga");
             Console.WriteLine("--------------------------------");
-            Console.WriteLine("M to send a message to Mario Context");
-            Console.WriteLine("L to send a message to Luigi Context");
-            Console.WriteLine("T to send a message to Toad Context");
-            Console.WriteLine("K to send a message to Koopa Context");
+            Console.WriteLine("M, L, T, K to send a message to Mario, Luigi, Toad or Koopa Context");
+            Console.WriteLine("--------------------------------");
+            Console.WriteLine("D to delay sending message");
             Console.WriteLine("--------------------------------");
 
             Console.WriteLine("Press any key to exit");
@@ -124,11 +123,34 @@ namespace Client
                         SendMessageWithHeader(bus, "Koopa", j++);
                         continue;
 
+                    //------
+                    case ConsoleKey.D:
+                        DelaySendingMessage(bus, j++);
+                        continue;
+
                     default:
                         return;
                 }
 
             }
+        }
+
+        private static void DelaySendingMessage(IEndpointInstance bus, int j)
+        {
+            var secondsToDelay = 60;
+
+            var placeOrder = new PlaceOrderMessage
+            {
+                Id = j,
+                Product = $"New shoes - Delayed by {secondsToDelay} seconds",
+            };
+
+            var options = new SendOptions();
+            options.DelayDeliveryWith(TimeSpan.FromSeconds(secondsToDelay));
+
+            bus.Send(placeOrder, options).ConfigureAwait(false);
+
+            Console.WriteLine($"Sent PlaceOrder with {secondsToDelay} seconds delay {j}\n\n");
         }
 
         private static void SendMessageWithHeader(IEndpointInstance bus, string contextMessageHeaderValue, int j)
@@ -142,7 +164,9 @@ namespace Client
             var options = new SendOptions();
             options.SetHeader(CustomHeaders.DealerContext, contextMessageHeaderValue);
 
-            bus.Send(placeOrder,options).ConfigureAwait(false);
+            bus.Send(placeOrder, options).ConfigureAwait(false);
+
+            Console.WriteLine($"Sent PlaceOrder for {contextMessageHeaderValue} {j}\n\n");
         }
 
         private static void SendMessage(IEndpointInstance bus, int j)
