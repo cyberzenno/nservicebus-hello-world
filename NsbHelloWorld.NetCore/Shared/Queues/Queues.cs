@@ -8,20 +8,37 @@ namespace Shared
 {
     public static class Queues
     {
-        public static string Prefix => "my.core"; 
+        public static string Prefix => "aaa";
 
-        public static string ClientQueue => $"{Prefix}.client.queue_{System.Environment.MachineName}";
-        public static string ClientQueueError => $"{Prefix}.{ClientQueue}.error";
+        public static string ClientQueue => $"{Prefix}.client.queue_{Environment.MachineName}";
 
-        public static string ServerQueue =>$"{Prefix}.server.queue_{System.Environment.MachineName}";
-        public static string ServerQueueError => $"{Prefix}.{ServerQueue}.error";
+        public static string ServerQueue => $"{Prefix}.server.queue_{Environment.MachineName}";
 
-        public static string DealerQueue =>$"{Prefix}.dealer.queue_{System.Environment.MachineName}";
-        public static string DealerQueueError => $"{Prefix}.{DealerQueue}.error";
+        public static string DealerQueue => $"{Prefix}.dealer.queue_{Environment.MachineName}";
 
-        public static string SubscriberQueue =>$"{Prefix}.subscriber.queue_{System.Environment.MachineName}";
-        public static string SubscriberQueueError => $"{Prefix}.{SubscriberQueue}.error";
+        public static string SubscriberQueue => $"{Prefix}.subscriber.queue_{Environment.MachineName}";
 
-        public static string Error => $"{Prefix}.error_{System.Environment.MachineName}";
+        public static string Error => $"{Prefix}.error";
+        public static string Error_Machine => $"{Prefix}.error_{Environment.MachineName}";
+
+
+        //--> Understanding Topology in Multitenant Scenarios
+        public static string SimplePublisherQueue(string environment, string group)
+        {
+            return $"{environment}.{group}.simple-publisher.queue";
+        }
+        public static string SimplePublisherQueue_Machine(string environment, string group)
+        {
+            return $"{SimplePublisherQueue(environment, group)}_{Environment.MachineName}";
+        }
+
+        public static string SimpleSubscriberQueue(string environment, string group)
+        {
+            return $"{environment}.{group}.simple-subscriber.queue";
+        }
+        public static string SimpleSubscriberQueue_Machine(string environment, string group)
+        {
+            return $"{SimpleSubscriberQueue(environment, group)}_{Environment.MachineName}";
+        }
     }
 }
