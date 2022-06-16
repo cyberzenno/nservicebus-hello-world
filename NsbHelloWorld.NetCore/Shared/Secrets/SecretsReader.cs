@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -17,14 +18,16 @@ namespace Shared
 
         public SecretsReader()
         {
-            var secretsJson ="Secrets\\ActualSecrets\\secrets.json";
+            var currentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            var secretsJson = Path.Combine(currentDirectory, "Secrets\\ActualSecrets\\secrets.json");
 
             var builder = new ConfigurationBuilder();
             configuration = builder
                  .AddJsonFile(secretsJson, false, true)
                  .Build();
 
-            var licenseXml = "Secrets\\ActualSecrets\\License.xml";
+            var licenseXml = Path.Combine(currentDirectory, "Secrets\\ActualSecrets\\License.xml");
             licenseXmlAsPlainText = File.ReadAllText(licenseXml);
         }
 

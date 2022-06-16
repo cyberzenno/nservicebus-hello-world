@@ -32,6 +32,7 @@ namespace SimpleSubscriber
             //in order to create the queues in Rabbit or any other trasnport
             config.EnableInstallers();
 
+
             //if the licence is not valid,
             //NSB will open the browser to get a Free License: https://particular.net/license/nservicebus?v=7.0.1&t=0&p=windows
             //just download and add the file Shared\Secrets\ActualSecrets\License.xml
@@ -39,11 +40,11 @@ namespace SimpleSubscriber
 
             //routing
             //routing is needed to tell which message goes where
-            var transport = config.UseTransport<RabbitMQTransport>();
-            transport.ConnectionString(() => _secrets.RabbitMQ_ConnectionString);
+            var transport = config.UseTransport<AzureServiceBusTransport>();
+            transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
 
             //RabbitMq specific
-            transport.UseDirectRoutingTopology();
+            //transport.UseDirectRoutingTopology();
 
             //bus
             var endpointInstance = Endpoint.Start(config).Result;

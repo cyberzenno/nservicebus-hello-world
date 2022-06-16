@@ -1,7 +1,9 @@
 ﻿using System;
 using NServiceBus;
 using NServiceBus.Logging;
+using NServiceBus.Transport;
 using Shared;
+
 
 namespace SimplePublisher
 {
@@ -25,6 +27,7 @@ namespace SimplePublisher
             //basic configurations
             var config = new EndpointConfiguration(Queues.SimplePublisherQueue(_environment, _group));
 
+
             config.UseSerialization<NewtonsoftSerializer>();
             config.UsePersistence<InMemoryPersistence>();
             config.SendFailedMessagesTo(Queues.Error);
@@ -40,11 +43,11 @@ namespace SimplePublisher
 
             //routing
             //routing is needed to tell which message goes where
-            var transport = config.UseTransport<RabbitMQTransport>();
-            transport.ConnectionString(() => _secrets.RabbitMQ_ConnectionString);
+            var transport = config.UseTransport<AzureServiceBusTransport>();
+            transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
 
             //RabbitMq specific
-            transport.UseDirectRoutingTopology();
+            //transport.UseDirectRoutingTopology();
 
             var routing = transport.Routing();
 
@@ -68,10 +71,7 @@ namespace SimplePublisher
 
             Console.WriteLine("Press any key to exit");
 
-            var i = 0;
             var j = 100;
-
-            var myId = Guid.NewGuid();
 
             while (true)
             {
@@ -99,7 +99,11 @@ namespace SimplePublisher
                 Message = $"Simple Event {j} ({_environment}.{_group} - {Environment.MachineName})",
             };
 
-            bus.Publish(simpleEvent).ConfigureAwait(false);
+            var publishOptions = new PublishOptions();
+            publishOptions.SetHeader(CustomHeaders.Environment, _environment);
+            publishOptions.SetHeader(CustomHeaders.Group, _group);
+
+            bus.Publish(simpleEvent, publishOptions).ConfigureAwait(false);
             Console.WriteLine("Published: " + simpleEvent.Message);
         }
     }
