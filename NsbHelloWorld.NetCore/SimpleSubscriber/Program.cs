@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using NServiceBus;
 using NServiceBus.Logging;
 using Shared;
@@ -14,6 +15,9 @@ namespace SimpleSubscriber
         {
             _environment = args[0] ?? "noEnv";
             _group = args[1] ?? "noGroup";
+
+            var currentNamespace = Assembly.GetExecutingAssembly().GetName().Name;
+            c.DisplayCustomTitleOnSmallWindow(_environment, _group, currentNamespace);
 
             var _secrets = new SecretsReader();
 
