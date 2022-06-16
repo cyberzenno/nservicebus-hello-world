@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D6EF097F-DE90-486A-9D7F-B2C40DABE912}"
 	ProjectSection(SolutionItems) = preProject
 		CustomScripts\Lauch_Multiple_PubSub_Endpoints.bat = CustomScripts\Lauch_Multiple_PubSub_Endpoints.bat
+		CustomScripts\README.md = CustomScripts\README.md
 	EndProjectSection
 EndProject
 Global
