@@ -3,6 +3,7 @@ using System.Reflection;
 using NServiceBus;
 using NServiceBus.Logging;
 using Shared;
+using Shared.Experiments;
 
 namespace SimpleSubscriber
 {
@@ -44,7 +45,7 @@ namespace SimpleSubscriber
 
             //routing
             //routing is needed to tell which message goes where
-            var transport = config.UseTransport<AzureServiceBusTransport>();
+            var transport = config.UseTransport<CustomAzureServiceBusTransport>();
             transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
 
             //RabbitMq specific

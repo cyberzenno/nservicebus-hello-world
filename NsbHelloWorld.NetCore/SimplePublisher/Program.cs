@@ -4,7 +4,7 @@ using NServiceBus;
 using NServiceBus.Logging;
 using NServiceBus.Transport;
 using Shared;
-
+using Shared.Experiments;
 
 namespace SimplePublisher
 {
@@ -47,7 +47,7 @@ namespace SimplePublisher
 
             //routing
             //routing is needed to tell which message goes where
-            var transport = config.UseTransport<AzureServiceBusTransport>();
+            var transport = config.UseTransport<CustomAzureServiceBusTransport>();
             transport.ConnectionString(() => _secrets.AzureServiceBus_ConnectionString);
 
             //RabbitMq specific

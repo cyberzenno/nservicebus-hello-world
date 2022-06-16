@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\NServiceBus.Transport.AzureServiceBus\src\Transport\NServiceBus.Transport.AzureServiceBus.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Secrets\ActualSecrets\License.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
