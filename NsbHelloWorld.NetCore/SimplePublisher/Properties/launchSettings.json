@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SimplePublisher": {
+      "commandName": "Project",
+      "commandLineArgs": "t1 mario"
+    }
+  }
+}

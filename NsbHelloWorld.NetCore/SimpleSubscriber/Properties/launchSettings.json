@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SimpleSubscriber": {
+      "commandName": "Project",
+      "commandLineArgs": "t1 mario"
+    }
+  }
+}

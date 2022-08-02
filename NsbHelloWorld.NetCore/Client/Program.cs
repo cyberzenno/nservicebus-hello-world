@@ -13,7 +13,7 @@ namespace Client
 
             //logging
             var logging = LogManager.Use<DefaultFactory>();
-            logging.Level(LogLevel.Error);
+            logging.Level(LogLevel.Debug);
 
             //config 
             //basic configurations
@@ -43,10 +43,10 @@ namespace Client
             var routing = transport.Routing();
 
             routing.RouteToEndpoint(typeof(PlaceOrderMessage), Queues.ServerQueue);
-            routing.RouteToEndpoint(typeof(StartHelloWorldSagaMessage), Queues.ServerQueue);
-            routing.RouteToEndpoint(typeof(SendSomethingToSagaMessage), Queues.ServerQueue);
-            routing.RouteToEndpoint(typeof(PrintSagaDataMessage), Queues.ServerQueue);
-            routing.RouteToEndpoint(typeof(CompleteHelloWorldSagaMessage), Queues.ServerQueue);
+            //routing.RouteToEndpoint(typeof(StartHelloWorldSagaMessage), Queues.ServerQueue);
+            //routing.RouteToEndpoint(typeof(SendSomethingToSagaMessage), Queues.ServerQueue);
+            //routing.RouteToEndpoint(typeof(PrintSagaDataMessage), Queues.ServerQueue);
+            //routing.RouteToEndpoint(typeof(CompleteHelloWorldSagaMessage), Queues.ServerQueue);
 
             //conventions
             //conventions are used to define, precisely, conventions
@@ -65,15 +65,15 @@ namespace Client
             //Console.WriteLine("X to delete all queues with [my.core.] prefix (recommended)");
             Console.WriteLine("--------------------------------");
             Console.WriteLine("UP to send a message");
-            Console.WriteLine("DOWN to start Saga");
-            Console.WriteLine("RIGHT to send message to Saga");
-            Console.WriteLine("SPACE to print Saga");
-            Console.WriteLine("LEFT to complete to Saga");
-            Console.WriteLine("--------------------------------");
-            Console.WriteLine("M, L, T, K to send a message to Mario, Luigi, Toad or Koopa Context");
-            Console.WriteLine("--------------------------------");
-            Console.WriteLine("S to delay sending message by few seconds");
-            Console.WriteLine("D to delay sending message by many days");
+            //Console.WriteLine("DOWN to start Saga");
+            //Console.WriteLine("RIGHT to send message to Saga");
+            //Console.WriteLine("SPACE to print Saga");
+            //Console.WriteLine("LEFT to complete to Saga");
+            //Console.WriteLine("--------------------------------");
+            //Console.WriteLine("M, L, T, K to send a message to Mario, Luigi, Toad or Koopa Context");
+            //Console.WriteLine("--------------------------------");
+            //Console.WriteLine("S to delay sending message by few seconds");
+            //Console.WriteLine("D to delay sending message by many days");
             Console.WriteLine("--------------------------------");
 
             Console.WriteLine("Press any key to exit");

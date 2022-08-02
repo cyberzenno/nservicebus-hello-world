@@ -8,18 +8,18 @@ namespace Shared
 {
     public static class Queues
     {
-        public static string Prefix => "aaa";
+        public static string Prefix => "xxx";
 
-        public static string ClientQueue => $"{Prefix}.client.queue_{Environment.MachineName}";
+        public static string ClientQueue => $"{Prefix}.client.queue";
 
-        public static string ServerQueue => $"{Prefix}.server.queue_{Environment.MachineName}";
+        public static string ServerQueue => $"{Prefix}.server.queue";
 
-        public static string DealerQueue => $"{Prefix}.dealer.queue_{Environment.MachineName}";
+        public static string DealerQueue => $"{Prefix}.dealer.queue";
 
-        public static string SubscriberQueue => $"{Prefix}.subscriber.queue_{Environment.MachineName}";
+        public static string SubscriberQueue => $"{Prefix}.subscriber.queue";
 
         public static string Error => $"{Prefix}.error";
-        public static string Error_Machine => $"{Prefix}.error_{Environment.MachineName}";
+        public static string Error_Machine => $"{Prefix}.error";
 
 
         //--> Understanding Topology in Multitenant Scenarios
@@ -29,7 +29,7 @@ namespace Shared
         }
         public static string SimplePublisherQueue_Machine(string environment, string group)
         {
-            return $"{SimplePublisherQueue(environment, group)}_{Environment.MachineName}";
+            return $"{SimplePublisherQueue(environment, group)}";
         }
 
         public static string SimpleSubscriberQueue(string environment, string group)
@@ -38,7 +38,7 @@ namespace Shared
         }
         public static string SimpleSubscriberQueue_Machine(string environment, string group)
         {
-            return $"{SimpleSubscriberQueue(environment, group)}_{Environment.MachineName}";
+            return $"{SimpleSubscriberQueue(environment, group)}";
         }
     }
 }

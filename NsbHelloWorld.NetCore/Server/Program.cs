@@ -13,7 +13,7 @@ namespace Server
 
             //logging
             var logging = LogManager.Use<DefaultFactory>();
-            logging.Level(LogLevel.Warn);
+            logging.Level(LogLevel.Debug);
 
             //config
             //basic configurations
@@ -54,6 +54,10 @@ namespace Server
 
             //bus
             var endpointInstance = Endpoint.Start(config).Result;
+
+            Console.WriteLine("--------------------------------");
+            Console.WriteLine("Server Started");
+            Console.WriteLine("--------------------------------");
 
             Console.ReadLine();
         }
